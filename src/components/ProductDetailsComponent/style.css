@@ -1,0 +1,21 @@
+.ant-input-number.css-dev-only-do-not-override-1k979oh.ant-input-number-outlined {
+  width: 50px;
+}
+
+.text-white {
+  color: white;
+  font-size: large;
+  font-family: "Times New Roman", Times, serif;
+}
+/* .button.ant-btn.css-dev-only-do-not-override-1k979oh.ant-btn-default.text-white.rounded-none {
+  &:hover {
+    background-color: aqua;
+  }
+} */
+:where(.css-dev-only-do-not-override-1k979oh).ant-btn-default:not(
+    :disabled
+  ):not(.ant-btn-disabled):hover {
+  /* color: black;
+  border-color: #4096ff;
+  background: #ffffff; */
+}
