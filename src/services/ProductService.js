@@ -17,3 +17,11 @@ export const deleteProduct = async (id) => {
   const res = await axios.delete(`${API_BACKEND_URL}/delete-product/${id}`);
   return res.data;
 };
+export const getDetailsProduct = async (id) => {
+  const res = await axios.get(`${API_BACKEND_URL}/getdetails-product/${id}`);
+  return res.data;
+};
+export const updateProduct = async (id, data, token) => {
+  const res = await axios.put(`${API_BACKEND_URL}/update-product/${id}`, data);
+  return res.data;
+};

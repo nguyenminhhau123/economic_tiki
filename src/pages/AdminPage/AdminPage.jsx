@@ -8,7 +8,7 @@ import AdminProduct from "../../components/AdminProduct/AdminProduct";
 const AdminPage = () => {
   const [keySelected, setKeySelected] = useState("");
 
-  const handleOnclick = ({ key }) => {
+  const handleOnClick = ({ key }) => {
     setKeySelected(key);
   };
 
@@ -32,7 +32,7 @@ const AdminPage = () => {
           style={{
             width: 256,
           }}
-          onClick={handleOnclick}
+          onClick={handleOnClick}
           selectedKeys={[keySelected]}
         >
           <Menu.Item key="user" icon={<UserOutlined />}>

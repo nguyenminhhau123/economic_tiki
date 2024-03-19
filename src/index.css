@@ -7,3 +7,9 @@ body {
   background-color: #f5f5fa;
   font-family: "font-sans";
 }
+.ant-upload-list-item-name {
+  display: none !important;
+}
+.ant-upload-list-item {
+  display: none !important;
+}

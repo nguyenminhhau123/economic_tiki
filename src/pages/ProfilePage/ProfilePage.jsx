@@ -11,37 +11,47 @@ import { Button, Upload } from "antd";
 import { useSelector } from "react-redux";
 import { user } from "../../redux/useSelector/userSelector";
 import * as UserService from "../../services/UserService";
-import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { toast } from "react-toastify";
 import { Zoom } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slices/userSlice";
-import * as Message from "../../components/Message/Message";
 import { useNavigate } from "react-router-dom";
 import { getBase64 } from "../../utils/utils";
+import { useMutation } from "@tanstack/react-query";
 export default function ProfilePage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dataUser = useSelector(user);
-
   const [email, setEmail] = useState(dataUser?.email);
   const [name, setName] = useState(dataUser?.name);
   const [phone, setPhone] = useState(dataUser?.phone);
   const [address, setAddress] = useState(dataUser?.address);
   const [avatar, setAvatar] = useState(dataUser?.avatar);
-  const mutation = useMutationHooks((data) => {
-    const { id, access_token, ...rests } = data;
-    UserService.updateUser(id, rests, access_token);
+  const mutation = useMutation({
+    mutationFn: (data) => {
+      const { id, access_token, ...rests } = data;
+      return UserService.updateUser(id, rests, access_token);
+    },
   });
-  const { variables, isPending, isSuccess, isError } = mutation;
+  const { isPending, isSuccess } = mutation;
   useEffect(() => {
     if (isSuccess) {
       handleGetDetailsUser(dataUser?.id, dataUser?.access_token);
       navigate("/");
-    } else {
+      toast.success(" update success!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Zoom,
+      });
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess]);
   useEffect(() => {
     setEmail(dataUser?.email);
     setName(dataUser?.name);
@@ -52,19 +62,7 @@ export default function ProfilePage() {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
-    console.log("ress", res);
     dispatch(updateUser({ ...res?.data, access_token: token }));
-    toast.success(" update success!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Zoom,
-    });
   };
 
   const handleOnChangeEmail = (value) => {
@@ -121,7 +119,6 @@ export default function ProfilePage() {
               placeholder="Your Name"
               suffix={<UserOutlined />}
             />
-
             <InputForm
               handleOnChange={handleOnChangePhone}
               value={phone}

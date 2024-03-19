@@ -10,7 +10,16 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-const queryClient = new QueryClient();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // disable retrieving data every time the window is displayed.
+      retry: 0,
+    },
+  },
+});
+
 root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
