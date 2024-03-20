@@ -1,20 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, Upload } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  PlusOutlined,
+  UploadOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Button, Modal, Form, Upload, Input, Space } from "antd";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { getBase64 } from "../../utils/utils";
 import * as ProductService from "../../services/ProductService";
 import Loading from "../LoadingComponent/Loading";
 import { toast, Zoom } from "react-toastify";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"; // Import useQueryClient here
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import Highlighter from "react-highlight-words";
+//
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+//
+// Import useQueryClient here
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import { user } from "../../redux/useSelector/userSelector";
 const AdminProduct = () => {
   const dataUser = useSelector(user);
 
-  console.log("datausser token", dataUser?.access_token);
+  // console.log("datausser token", dataUser?.access_token);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -40,13 +49,240 @@ const AdminProduct = () => {
     selled: "",
     discount: "",
   };
+  //
+  const renderIcon = (productId) => {
+    return (
+      <div className="gap-x-4 ">
+        <DeleteOutlined
+          className="text-red-500 text-[20px] mr-2 cursor-pointer"
+          onClick={() => {
+            handleDeleteProduct(productId);
+          }}
+        />
+        <EditOutlined
+          className="text-yellow-500 text-[20px] cursor-pointer"
+          onClick={handleDetailsProduct}
+        />
+      </div>
+    );
+  };
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            className="w-[90px] bg-blue-600"
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name), // Sắp xếp theo tên
+      ...getColumnSearchProps("name"),
+    },
+
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: (a, b) => a.type.localeCompare(b.type),
+      filters: [
+        {
+          text: "phone",
+          value: "phone",
+        },
+        {
+          text: "air",
+          value: "air",
+        },
+      ],
+      onFilter: (value, record) => record.type.indexOf(value) === 0,
+      sorter: (a, b) => a.type.length - b.type.length,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      sorter: (a, b) => a.price - b.price,
+      filters: [
+        {
+          text: "<=300",
+          value: "<=300",
+        },
+        {
+          text: ">300",
+          value: ">300",
+        },
+      ],
+      onFilter: (value, record) => {
+        if (value === "<=300") {
+          return record.price <= 300;
+        } else if (value === ">300") {
+          return record.price > 300;
+        }
+        return false;
+      },
+    },
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+      sorter: (a, b) => a.rating - b.rating,
+      filters: [
+        {
+          text: "<3",
+          value: "<3",
+        },
+        {
+          text: ">=3",
+          value: ">=3",
+        },
+      ],
+      onFilter: (value, record) => {
+        if (value === "<3") {
+          return record.rating < 3;
+        } else if (value === ">=3") {
+          return record.rating >= 3;
+        }
+        return false;
+      },
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "CountInStock",
+      dataIndex: "countInStock",
+      key: "countInStock",
+    },
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (image) => <img src={image} alt="Product" />,
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (_, record) => renderIcon(record.key),
+    },
+  ];
 
   const [form] = Form.useForm();
   const [stateProduct, setStateProduct] = useState(initialState);
   const [stateProductDetails, setStateProductDetails] = useState(
     initialStateProductDetails
   );
-  console.log("stateProductDetails", stateProductDetails);
+  // console.log("stateProductDetails", stateProductDetails);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOnChangeAvatar = async ({ fileList }) => {
@@ -200,12 +436,7 @@ const AdminProduct = () => {
       });
     },
   });
-  const {
-    data: dataUpdated,
-    isSpending: isLoadingUpdated,
-    isSuccess: isSuccessUpdated,
-    isError: isErrorUpdated,
-  } = mutationUpdate;
+
   const onFinishUpdateProduct = () => {
     mutationUpdate.mutate({
       id: selectedProductId,
@@ -252,6 +483,12 @@ const AdminProduct = () => {
     { label: "selled", key: "selled" },
     { label: "countInStock", key: "countInStock" },
   ];
+  const dataTable = data?.productAll.map((product) => {
+    return {
+      ...product,
+      key: product._id,
+    };
+  });
   return (
     <div className="">
       <div className="font-thin text-[22px]">Quản lý Sản Phẩm</div>
@@ -267,10 +504,10 @@ const AdminProduct = () => {
         {isLoading ? (
           <Loading isLoading={isLoading} />
         ) : (
-          data?.productAll &&
-          data.productAll.length > 0 && (
+          dataTable && (
             <TableComponent
-              data={data.productAll}
+              columns={columns}
+              dataTable={dataTable}
               isLoading={isLoading}
               handleDeleteProduct={handleDeleteProduct}
               handleDetailsProduct={handleDetailsProduct}
