@@ -20,8 +20,8 @@ export const signUpUser = async (data) => {
 
 // Hàm lấy thông tin chi tiết người dùng
 export const getDetailsUser = async (id, token) => {
-  // console.log("token", token);
-  const res = await axiosJWT.get(`${API_BACKEND_URL}/getdetail-user/${id}`, {
+  console.log("id", id);
+  const res = await axios.get(`${API_BACKEND_URL}/getdetail-user/${id}`, {
     headers: {
       token: `Bearer ${token}`,
     },
@@ -42,7 +42,7 @@ export const logout_user = async () => {
 };
 
 export const updateUser = async (id, data, token) => {
-  const res = await axiosJWT.put(`${API_BACKEND_URL}/update-user/${id}`, data, {
+  const res = await axios.put(`${API_BACKEND_URL}/update-user/${id}`, data, {
     headers: {
       token: `Bearer ${token}`,
     },
@@ -59,14 +59,6 @@ export const getAllUser = async (token) => {
   return res.data;
 };
 
-// export const createUser = async (token) => {
-//   const res = await axios.get(`${API_BACKEND_URL}/getall-user`, {
-//     headers: {
-//       token: `Bearer ${token}`,
-//     },
-//   });
-//   return res.data;
-// };
 export const deleteUser = async (id, token) => {
   const res = await axios.delete(`${API_BACKEND_URL}/delete-user/${id}`, {
     headers: {
@@ -75,11 +67,3 @@ export const deleteUser = async (id, token) => {
   });
   return res.data;
 };
-// export const createUser = async (data, token) => {
-//   const res = await axios.post(`${API_BACKEND_URL}/sign-up`, data, {
-//     headers: {
-//       token: `Bearer ${token}`,
-//     },
-//   });
-//   return res.data;
-// };

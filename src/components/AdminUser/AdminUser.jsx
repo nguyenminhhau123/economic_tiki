@@ -4,7 +4,7 @@ import {
   UploadOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Modal, Form, Upload, Input, Space } from "antd";
+import { Button, Form, Upload, Input, Space, Switch, Modal } from "antd";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { getBase64 } from "../../utils/utils";
@@ -24,6 +24,7 @@ const AdminUser = () => {
   const dataUser = useSelector(user);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState("");
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const initialState = {
     name: "",
     email: "",
@@ -31,16 +32,29 @@ const AdminUser = () => {
     address: "",
     avatar: "",
   };
+
+  const showModalDelete = () => {
+    setIsModalOpenDelete(true);
+  };
+  const handleOk = () => {
+    handleDeleteUser();
+    setIsModalOpenDelete(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpenDelete(false);
+  };
   const renderIcon = (userId) => {
     return (
       <div className="gap-x-4 ">
         <DeleteOutlined
           className="text-red-500 text-[20px] mr-2 cursor-pointer"
-          onClick={handleDeleteUser}
+          onClick={() => {
+            showModalDelete();
+          }}
         />
         <EditOutlined
           className="text-yellow-500 text-[20px] cursor-pointer"
-          // onClick={handleDetailsProduct}
+          onClick={handleDetailsUser}
         />
       </div>
     );
@@ -179,8 +193,16 @@ const AdminUser = () => {
       title: "IsAdmin",
       dataIndex: "isAdmin",
       key: "isAdmin",
-      render: (text) => <span>{text.toString()}</span>,
+      render: () => (
+        <Switch
+          checked={stateUser.isAdmin}
+          onChange={(checked) =>
+            setStateUser((prevState) => ({ ...prevState, isAdmin: checked }))
+          }
+        />
+      ),
     },
+
     {
       title: "Address",
       dataIndex: "address",
@@ -195,7 +217,9 @@ const AdminUser = () => {
       title: "Avatar",
       dataIndex: "avatar",
       key: "avatar",
-      render: (avatar) => <img src={avatar} alt="user" />,
+      render: (avatar) => (
+        <img className="h-[50px]  object-cover" src={avatar} alt="user" />
+      ),
     },
     {
       title: "Action",
@@ -203,49 +227,49 @@ const AdminUser = () => {
       render: (_, record) => renderIcon(record.key),
     },
   ];
-  const handleOnChangeAvatar = async ({ fileList }) => {
+  // const handleOnChangeAvatar = async ({ fileList }) => {
+  //   const file = fileList[0];
+  //   if (file && !file.url && !file.preview) {
+  //     file.preview = await getBase64(file.originFileObj);
+  //   }
+  //   setStateUser((prevState) => ({
+  //     ...prevState,
+  //     avatar: file.preview,
+  //   }));
+  // };
+  // const handleOnChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setStateUser((prevState) => ({
+  //     ...prevState,
+  //     [name]: value,
+  //   }));
+  // };
+
+  const handleOnChangeAvtDetails = async ({ fileList }) => {
     const file = fileList[0];
     if (file && !file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
+
     setStateUser((prevState) => ({
       ...prevState,
       avatar: file.preview,
     }));
   };
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-
-    setStateUser((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleOnChangeUserDetails = (name, value) => {
+    if (name === "isAdmin") {
+      setStateUser((prevState) => ({ ...prevState, isAdmin: value }));
+    } else {
+      setStateUser((prevState) => ({ ...prevState, [name]: value }));
+    }
   };
-  //
-  // const handleOnChangeAvtDetails = async ({ fileList }) => {
-  //   const file = fileList[0];
-  //   if (file && !file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
 
-  //   setStateProductDetails((prevState) => ({
-  //     ...prevState,
-  //     image: file.preview,
-  //   }));
+  // const handleCancel = () => {
+  //   setIsModalOpen(false);
+  //   setStateUser(initialState);
+  //   form.resetFields();
   // };
-  // const handleOnChangeProductDetails = (e) => {
-  //   const { name, value } = e.target;
-  //   setStateProductDetails((prevState) => ({
-  //     ...prevState,
-  //     [name]: value,
-  //   }));
-  // };
-  //
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setStateUser(initialState);
-    form.resetFields();
-  };
 
   const fetchData = () => {
     try {
@@ -287,73 +311,75 @@ const AdminUser = () => {
       token: dataUser?.access_token,
     });
   };
-  // update Product
-  // const token = dataUser?.access_token;
-  // const getDetailsUser = async ({id: selectedUserId, token}) => {
-  //   const res = await userService.getDetailsUser({
-  //     id: selectedUserId,
-  //   });
-  //   if (res?.data) {
-  //     setStateProductDetails({});
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (getDetailProduct(selectedProductId));
-  // }, [selectedProductId]);
-  // const mutationUpdate = useMutation({
-  //   mutationFn: (data) => {
-  //     const { id, token, ...rests } = data;
-  //     return ProductService.updateProduct(id, rests, token);
-  //   },
-  //   onSuccess: () => {
-  //     refetch();
-  //     toast.success("Update Successful!", {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //       transition: Zoom,
-  //     });
-  //   },
-  // });
+  // update user
+  const getDetailsUser = async (data) => {
+    const { id, token } = data;
+    const res = await userService.getDetailsUser(id, token);
+    console.log("res", res);
+    if (res?.data) {
+      setStateUser({
+        name: res?.data.name,
+        email: res?.data.email,
+        isAdmin: res?.data.isAdmin,
+        address: res?.data.address,
+        avatar: res?.data.avatar,
+        phone: res?.data.phone,
+      });
+    }
+  };
+  useEffect(() => {
+    // Tạo một đối tượng mới chứa các giá trị của stateUser
+    const fieldsValues = {
+      name: stateUser.name,
+      email: stateUser.email,
+      isAdmin: stateUser.isAdmin,
+      address: stateUser.address,
+      avatar: stateUser.avatar,
+      phone: stateUser.phone,
+    };
+    // Đặt giá trị của tất cả các trường trong mẫu dữ liệu
+    form.setFieldsValue(fieldsValues);
+  }, [form, stateUser]);
+  const mutationUpdate = useMutation({
+    mutationFn: (data) => {
+      const { id, token, ...rests } = data;
+      return userService.updateUser(id, rests, token);
+    },
+    onSuccess: () => {
+      refetch();
+      toast.success("Update Successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Zoom,
+      });
+    },
+  });
 
-  // const onFinishUpdateProduct = () => {
-  //   mutationUpdate.mutate({
-  //     id: selectedProductId,
-  //     ...stateProductDetails,
-  //     token: dataUser?.access_token,
-  //   });
+  const onFinishUpdateUser = () => {
+    mutationUpdate.mutate({
+      id: selectedUserId,
+      ...stateUser,
+      token: dataUser?.access_token,
+    });
 
-  //   setIsOpenDrawer(false);
-  // };
+    setIsOpenDrawer(false);
+  };
 
-  // useEffect(() => {
-  //   // Tạo một đối tượng mới chứa các giá trị của stateProductDetails
-  //   const fieldsValues = {
-  //     countInStock: stateProductDetails.countInStock,
-  //     description: stateProductDetails.description,
-  //     image: stateProductDetails.image,
-  //     name: stateProductDetails.name,
-  //     price: stateProductDetails.price,
-  //     rating: stateProductDetails.rating,
-  //     type: stateProductDetails.type,
-  //     selled: stateProductDetails.selled,
-  //     discount: stateProductDetails.discount,
-  //   };
-  //   // Đặt giá trị của tất cả các trường trong mẫu dữ liệu
-  //   form.setFieldsValue(fieldsValues);
-  // }, [form, stateProductDetails]);
-
-  // const handleDetailsProduct = async () => {
-  //   if (selectedProductId) {
-  //     setIsOpenDrawer(true);
-  //     await getDetailProduct(selectedProductId);
-  //   }
-  // };
+  const handleDetailsUser = async () => {
+    if (selectedUserId) {
+      setIsOpenDrawer(true);
+      await getDetailsUser({
+        id: selectedUserId,
+        token: dataUser?.access_token,
+      });
+    }
+  };
 
   const formFields = [
     { label: "name", key: "name" },
@@ -362,12 +388,6 @@ const AdminUser = () => {
     { label: "address", key: "address" },
     { label: "phone", key: "phone" },
   ];
-  // const dataTable = data?.productAll.map((product) => {
-  //   return {
-  //     ...product,
-  //     key: product._id,
-  //   };
-  // });
   const dataTable = data?.data.map((user) => {
     return {
       ...user,
@@ -376,15 +396,16 @@ const AdminUser = () => {
   });
   return (
     <div className="">
-      <div className="font-thin text-[22px]">Quản lý Sản Phẩm</div>
-      <Button
-        className="w-36 h-36 rounded-lg"
-        onClick={() => {
-          setIsModalOpen(true);
-        }}
+      <div className="font-thin text-[22px]">Quản Lý người dùng</div>
+      <Modal
+        className=""
+        title="xóa tài khoản"
+        open={isModalOpenDelete}
+        onOk={handleOk}
+        onCancel={handleCancel}
       >
-        <PlusOutlined className="text-[64px]" />
-      </Button>
+        <p>bạn có chắc xóa không?</p>
+      </Modal>
       <div>
         {isLoading ? (
           <Loading isLoading={isLoading} />
@@ -394,90 +415,17 @@ const AdminUser = () => {
               columns={columns}
               dataTable={dataTable}
               isLoading={isLoading}
-              // handleDeleteProduct={handleDeleteProduct}
-              // handleDetailsProduct={handleDetailsProduct}
-              //  onRow antd
               onRow={(record, rowIndex) => {
                 return {
                   onClick: (event) => {
                     setSelectedUserId(record.key);
-                  }, // click row
+                  },
                 };
               }}
             />
           )
         )}
       </div>
-
-      <Modal
-        title="Create User"
-        forceRender
-        footer={null}
-        open={isModalOpen}
-        onCancel={handleCancel}
-      >
-        <Loading isLoading={isLoading}>
-          <Form
-            form={form}
-            // onFinish={onFinish}
-            name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 16 }}
-            autoComplete="off"
-          >
-            {formFields.map(({ label, key }) => (
-              <Form.Item
-                key={key}
-                label={label}
-                name={key}
-                rules={[
-                  {
-                    required: true,
-                    message: `Please input your ${label} user!`,
-                  },
-                ]}
-              >
-                <InputComponent
-                  value={stateUser[key]}
-                  onChange={handleOnChange}
-                  name={key}
-                />
-              </Form.Item>
-            ))}
-            <Form.Item
-              label="Avatar"
-              name="Avatar"
-              rules={[{ message: "Please input your avatar user!" }]}
-            >
-              <div>
-                <Upload onChange={handleOnChangeAvatar} maxCount={1}>
-                  <Button className="w-[315px]" icon={<UploadOutlined />}>
-                    Upload Avatar
-                  </Button>
-                </Upload>
-
-                <div className="gap-y-3 flex justify-center items-center">
-                  {stateUser?.avatar && (
-                    <img
-                      src={stateUser?.avatar}
-                      className="w-[120px] h-[120px] rounded-full object-cover"
-                    />
-                  )}
-                </div>
-              </div>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
-              <Button
-                className="w-full bg-blue-600"
-                type="primary"
-                htmlType="submit"
-              >
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </Modal>
       <DrawerComponent
         width="90%"
         title="User"
@@ -486,10 +434,10 @@ const AdminUser = () => {
           setIsOpenDrawer(false);
         }}
       >
-        <Loading>
+        <Loading isLoading={isLoading}>
           <Form
             form={form}
-            // onFinish={onFinishUpdateProduct}
+            onFinish={onFinishUpdateUser}
             name="basic"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 20 }}
@@ -509,8 +457,8 @@ const AdminUser = () => {
                 ]}
               >
                 <InputComponent
-                  // value={stateProductDetails[key]}
-                  // onChange={handleOnChangeProductDetails}
+                  value={stateUser[key]}
+                  onChange={(e) => handleOnChangeUserDetails(key, e)}
                   name={key}
                 />
               </Form.Item>
@@ -521,28 +469,27 @@ const AdminUser = () => {
               name="Avatar"
               rules={[{ message: "Please input your Avatar product!" }]}
             >
-              {/* <div>
+              <div>
                 <Upload onChange={handleOnChangeAvtDetails} maxCount={1}>
                   <Button className="w-[500px]" icon={<UploadOutlined />}>
                     Upload Avatar
                   </Button>
                 </Upload>
-
                 <div className="gap-y-3 flex justify-center items-center">
-                  {stateProductDetails?.image && (
+                  {stateUser?.avatar && (
                     <img
-                      src={stateProductDetails?.image}
+                      src={stateUser?.avatar}
                       className="w-[120px] h-[120px] rounded-full object-cover"
                     />
                   )}
                 </div>
-              </div> */}
+              </div>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="w-full bg-blue-600"
+                className="w-full text-white bg-blue-500"
               >
                 Apply
               </Button>

@@ -509,8 +509,8 @@ const AdminProduct = () => {
               columns={columns}
               dataTable={dataTable}
               isLoading={isLoading}
-              handleDeleteProduct={handleDeleteProduct}
-              handleDetailsProduct={handleDetailsProduct}
+              // handleDeleteProduct={handleDeleteProduct}
+              // handleDetailsProduct={handleDetailsProduct}
               //  onRow antd
               onRow={(record, rowIndex) => {
                 return {
