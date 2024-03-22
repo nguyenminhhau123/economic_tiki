@@ -311,6 +311,39 @@ const AdminUser = () => {
       token: dataUser?.access_token,
     });
   };
+  // delete many
+
+  const mutationDeleteMany = useMutation({
+    mutationFn: (data) => {
+      const { id, token } = data;
+      console.log(data);
+      console.log("id", id, token);
+      console.log("token", token);
+      return userService.deleteUser(id, token);
+    },
+    onSuccess: () => {
+      refetch();
+      toast.success("Delete Successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Zoom,
+      });
+    },
+  });
+
+  const handleDeleteMany = async (ids) => {
+    console.log("ids", ids);
+    mutationDeleteMany.mutate({
+      id: ids,
+      token: dataUser?.access_token,
+    });
+  };
   // update user
   const getDetailsUser = async (data) => {
     const { id, token } = data;
@@ -415,6 +448,7 @@ const AdminUser = () => {
               columns={columns}
               dataTable={dataTable}
               isLoading={isLoading}
+              handleDeleteMany={handleDeleteMany}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: (event) => {

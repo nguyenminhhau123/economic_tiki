@@ -268,7 +268,9 @@ const AdminProduct = () => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (image) => <img src={image} alt="Product" />,
+      render: (image) => (
+        <img src={image} className="h-[50px] object-cover" alt="Product" />
+      ),
     },
     {
       title: "Action",
@@ -395,6 +397,38 @@ const AdminProduct = () => {
       },
     });
   };
+  // delete many
+  const mutationDeleteMany = useMutation({
+    mutationFn: (data) => {
+      console.log("data delete", data);
+      const { id, token } = data;
+      return ProductService.deleteProductMany(id, token);
+    },
+  });
+  const handleDeleteMany = (ids) => {
+    mutationDeleteMany.mutate(
+      {
+        id: ids,
+        token: dataUser?.access_token,
+      },
+      {
+        onSuccess: () => {
+          refetch();
+          toast.success("Delete Successful!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Zoom,
+          });
+        },
+      }
+    );
+  };
   // update Product
   useEffect(() => {
     if (getDetailProduct(selectedProductId));
@@ -506,6 +540,7 @@ const AdminProduct = () => {
         ) : (
           dataTable && (
             <TableComponent
+              handleDeleteMany={handleDeleteMany}
               columns={columns}
               dataTable={dataTable}
               isLoading={isLoading}

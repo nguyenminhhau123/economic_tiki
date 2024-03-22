@@ -67,3 +67,11 @@ export const deleteUser = async (id, token) => {
   });
   return res.data;
 };
+export const deleteUserMany = async (data, token) => {
+  const res = await axios.post(`${API_BACKEND_URL}/deleteMany-user`, data, {
+    headers: {
+      token: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
