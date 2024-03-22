@@ -4,10 +4,21 @@ export const createProduct = async (req, res) => {
   try {
     const data = await req.body;
 
-    const { name, image, type, price, countInStock, rating, description } =
-      data;
+    const {
+      selled,
+      discount,
+      name,
+      image,
+      type,
+      price,
+      countInStock,
+      rating,
+      description,
+    } = data;
 
     if (
+      !selled ||
+      !discount ||
       !name ||
       !image ||
       !type ||
@@ -16,7 +27,7 @@ export const createProduct = async (req, res) => {
       !rating ||
       !description
     ) {
-      return res.status(200).json({
+      return res.status(400).json({
         status: "ERR",
         errMessage: "the input is required",
       });
@@ -32,6 +43,7 @@ export const createProduct = async (req, res) => {
 };
 export const updateProduct = async (req, res) => {
   const idProduct = req.params.id;
+  console.log("idProduct", idProduct);
   const data = req.body;
   try {
     const response = await ProductService.updateProduct(idProduct, data);
@@ -46,6 +58,17 @@ export const deleteProduct = async (req, res) => {
   const idProduct = req.params.id;
   try {
     const response = await ProductService.deleteProduct(idProduct);
+    res.status(200).json(response);
+  } catch (err) {
+    return res.status(404).json({
+      errMessage: err,
+    });
+  }
+};
+export const deleteManyProduct = async (req, res) => {
+  const data = req.body;
+  try {
+    const response = await ProductService.deleteManyProduct(data);
     res.status(200).json(response);
   } catch (err) {
     return res.status(404).json({

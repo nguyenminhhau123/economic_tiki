@@ -104,7 +104,17 @@ export const deleteUserController = async (req, res) => {
     });
   }
 };
-
+export const deleteManyUserController = async (req, res) => {
+  const data = res.body;
+  try {
+    const response = await UserService.deleteMany(data);
+    res.status(200).json(response);
+  } catch (err) {
+    return res.status(404).json({
+      errMessage: err,
+    });
+  }
+};
 export const getAllUserController = async (req, res) => {
   try {
     const response = await UserService.getAllUser();

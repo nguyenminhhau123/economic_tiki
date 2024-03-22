@@ -2,7 +2,9 @@ import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+
 dotenv.config();
+
 import { genneralAccessToken, genneralRefreshToken } from "./JwtService.js";
 export const createUser = async (newUser) => {
   const { name, email, password, confirmPassword, phone, isAdmin } = newUser;
@@ -138,6 +140,20 @@ export const deleteUser = async (id) => {
       resolve({
         status: "ok",
         message: "delete user successful!",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+export const deleteManyUser = async (ids) => {
+  console.log("ids", ids);
+  return new Promise(async (resolve, reject) => {
+    try {
+      await User.deleteMany({ _id: ids });
+      resolve({
+        status: "ok",
+        massage: "delete is successful",
       });
     } catch (error) {
       reject(error);

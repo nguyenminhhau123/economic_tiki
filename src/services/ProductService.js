@@ -3,8 +3,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const createProduct = async (newProduct) => {
-  const { name, image, type, price, countInStock, rating, description } =
-    newProduct;
+  const {
+    selled,
+    discount,
+    name,
+    image,
+    type,
+    price,
+    countInStock,
+    rating,
+    description,
+  } = newProduct;
   return new Promise(async (resolve, reject) => {
     try {
       const checkProduct = await Product.findOne({
@@ -12,25 +21,29 @@ export const createProduct = async (newProduct) => {
       });
       if (checkProduct !== null) {
         resolve({
-          status: "ok",
+          status: "Err",
           errMessage: "the product is already!",
         });
-      }
-      const createProduct = await Product.create({
-        name,
-        image,
-        type,
-        price,
-        countInStock,
-        rating,
-        description,
-      });
-      if (createProduct) {
-        resolve({
-          status: "ok",
-          massage: "create successful",
-          data: createProduct,
+      } else {
+        const createProduct = await Product.create({
+          selled,
+          discount,
+          name,
+          image,
+          type,
+          price,
+          countInStock,
+          rating,
+          description,
         });
+
+        if (createProduct) {
+          resolve({
+            status: "ok",
+            massage: "create successful",
+            data: createProduct,
+          });
+        }
       }
     } catch (error) {
       reject(error);
@@ -40,20 +53,19 @@ export const createProduct = async (newProduct) => {
 export const updateProduct = async (id, updateProduct) => {
   const { name, image, type, price, countInStock, rating, description } =
     updateProduct;
-  console.log("id", id);
-  console.log("updateProduct", updateProduct);
+  console.log("id update ", updateProduct);
+
   return new Promise(async (resolve, reject) => {
     try {
       const checkProduct = await Product.findOne({
         _id: id,
       });
       if (checkProduct === null) {
-        resolve({
+        reject({
           status: "ERR",
           errMessage: "product is not defined!",
         });
       }
-
       if (checkProduct) {
         const createProduct = await Product.findByIdAndUpdate(
           id,
@@ -74,26 +86,37 @@ export const updateProduct = async (id, updateProduct) => {
   });
 };
 export const deleteProduct = async (id) => {
-  console.log("id", id);
-
   return new Promise(async (resolve, reject) => {
     try {
       const checkProduct = await Product.findOne({
         _id: id,
       });
       if (checkProduct === null) {
-        resolve({
+        reject({
           status: "ERR",
           errMessage: "product is not defined!",
         });
-      }
-      if (checkProduct) {
+      } else {
         await Product.findByIdAndDelete(id);
         resolve({
           status: "ok",
           massage: "delete is successful",
         });
       }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const deleteManyProduct = async (ids) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await Product.deleteMany({ _id: ids });
+      resolve({
+        status: "ok",
+        massage: "delete is successful",
+      });
     } catch (error) {
       reject(error);
     }

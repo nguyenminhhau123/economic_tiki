@@ -25,6 +25,10 @@ router.get(
 );
 router.post("/refresh-token", UserController.refreshToken);
 router.post("/logout", UserController.logout);
-
+router.post(
+  "/deleteMany-user",
+  authMiddleware,
+  UserController.deleteManyUserController
+);
 // module.exports = router;
 export default router;
