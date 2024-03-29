@@ -49,12 +49,12 @@ const AdminUser = () => {
         <DeleteOutlined
           className="text-red-500 text-[20px] mr-2 cursor-pointer"
           onClick={() => {
-            showModalDelete();
+            handleDeleteUser(userId);
           }}
         />
         <EditOutlined
           className="text-yellow-500 text-[20px] cursor-pointer"
-          onClick={handleDetailsUser}
+          onClick={() => handleDetailsUser(userId)}
         />
       </div>
     );
@@ -193,14 +193,8 @@ const AdminUser = () => {
       title: "IsAdmin",
       dataIndex: "isAdmin",
       key: "isAdmin",
-      render: () => (
-        <Switch
-          checked={stateUser.isAdmin}
-          onChange={(checked) =>
-            setStateUser((prevState) => ({ ...prevState, isAdmin: checked }))
-          }
-        />
-      ),
+
+      render: (isAdmin) => <span>{isAdmin ? "true" : "false"}</span>,
     },
 
     {
@@ -227,25 +221,6 @@ const AdminUser = () => {
       render: (_, record) => renderIcon(record.key),
     },
   ];
-  // const handleOnChangeAvatar = async ({ fileList }) => {
-  //   const file = fileList[0];
-  //   if (file && !file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
-  //   setStateUser((prevState) => ({
-  //     ...prevState,
-  //     avatar: file.preview,
-  //   }));
-  // };
-  // const handleOnChange = (e) => {
-  //   const { name, value } = e.target;
-
-  //   setStateUser((prevState) => ({
-  //     ...prevState,
-  //     [name]: value,
-  //   }));
-  // };
-
   const handleOnChangeAvtDetails = async ({ fileList }) => {
     const file = fileList[0];
     if (file && !file.url && !file.preview) {
@@ -257,19 +232,13 @@ const AdminUser = () => {
       avatar: file.preview,
     }));
   };
-  const handleOnChangeUserDetails = (name, value) => {
-    if (name === "isAdmin") {
-      setStateUser((prevState) => ({ ...prevState, isAdmin: value }));
-    } else {
-      setStateUser((prevState) => ({ ...prevState, [name]: value }));
-    }
+  const handleOnChangeUserDetails = (e) => {
+    const { name, value } = e.target;
+    setStateUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
-
-  // const handleCancel = () => {
-  //   setIsModalOpen(false);
-  //   setStateUser(initialState);
-  //   form.resetFields();
-  // };
 
   const fetchData = () => {
     try {
@@ -288,6 +257,7 @@ const AdminUser = () => {
   const mutationDelete = useMutation({
     mutationFn: (data) => {
       const { id, token } = data;
+      console.log("id32232", id);
       return userService.deleteUser(id, token);
     },
     onSuccess: () => {
@@ -305,12 +275,15 @@ const AdminUser = () => {
       });
     },
   });
-  const handleDeleteUser = async () => {
+  const handleDeleteUser = async (userId) => {
+    setIsModalOpenDelete(true);
+    setSelectedUserId(userId);
     mutationDelete.mutate({
       id: selectedUserId,
       token: dataUser?.access_token,
     });
   };
+
   // delete many
 
   const mutationDeleteMany = useMutation({
@@ -347,6 +320,7 @@ const AdminUser = () => {
   // update user
   const getDetailsUser = async (data) => {
     const { id, token } = data;
+    console.log("11", id, token);
     const res = await userService.getDetailsUser(id, token);
     console.log("res", res);
     if (res?.data) {
@@ -404,7 +378,8 @@ const AdminUser = () => {
     setIsOpenDrawer(false);
   };
 
-  const handleDetailsUser = async () => {
+  const handleDetailsUser = async (id) => {
+    setSelectedUserId(id);
     if (selectedUserId) {
       setIsOpenDrawer(true);
       await getDetailsUser({
@@ -449,13 +424,13 @@ const AdminUser = () => {
               dataTable={dataTable}
               isLoading={isLoading}
               handleDeleteMany={handleDeleteMany}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => {
-                    setSelectedUserId(record.key);
-                  },
-                };
-              }}
+              // onRow={(record, rowIndex) => {
+              //   return {
+              //     onClick: (event) => {
+              //       setSelectedUserId(record.key);
+              //     },
+              //   };
+              // }}
             />
           )
         )}
@@ -492,7 +467,7 @@ const AdminUser = () => {
               >
                 <InputComponent
                   value={stateUser[key]}
-                  onChange={(e) => handleOnChangeUserDetails(key, e)}
+                  onChange={handleOnChangeUserDetails}
                   name={key}
                 />
               </Form.Item>

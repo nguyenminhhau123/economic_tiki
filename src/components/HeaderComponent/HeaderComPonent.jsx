@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as UserService from "../../services/UserService";
 import { ResetUser } from "../../redux/slices/userSlice";
+import { searchProduct } from "../../redux/slices/ProductSlice";
 import {
   UserOutlined,
   DownOutlined,
@@ -24,10 +25,19 @@ export default function HeaderComponent({ isSearch, isCart }) {
   const [isPending, setIsPending] = useState(false);
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
+  const [stateSearch, setStateSearch] = useState("");
   const dispatch = useDispatch();
+  // search
+  const handleSearch = (e) => {
+    setStateSearch(e.target.value);
+    // console.log(e.target.value);
+    dispatch(searchProduct(e.target.value));
+  };
+
   const handleLogoutUser = async () => {
     localStorage.clear();
     setIsPending(true);
+    navigate("/");
     await UserService.logout_user();
     dispatch(ResetUser());
     setIsPending(false);
@@ -69,6 +79,7 @@ export default function HeaderComponent({ isSearch, isCart }) {
     </div>
   );
   return (
+    // <div className="fixed top-0 left-0 w-[100%] z-[1000]">
     <div
       className={`w-full grid ${
         isCart ? "lg:grid-cols-2 " : "grid-cols-4"
@@ -91,7 +102,11 @@ export default function HeaderComponent({ isSearch, isCart }) {
       {!isSearch && (
         <div className="flex lg:col-span-2 flex-1 justify-center items-center ">
           <div className="flex-1 lg:block hidden">
-            <InputComponent placeholder="search" />
+            <InputComponent
+              placeholder="search"
+              value={stateSearch}
+              onChange={handleSearch}
+            />
           </div>
 
           <div className="lg:block hidden">
@@ -153,5 +168,6 @@ export default function HeaderComponent({ isSearch, isCart }) {
         </div>
       </div>
     </div>
+    // </div>
   );
 }

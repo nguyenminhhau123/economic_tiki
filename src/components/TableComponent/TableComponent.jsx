@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Table, Button } from "antd";
 import Loading from "../../components/LoadingComponent/Loading";
 import "./css.scss";
-import { useState, useEffect, useRef } from "react";
-import { DownloadTableExcel } from "react-export-table-to-excel";
+import { Excel } from "antd-table-saveas-excel";
+import { useState } from "react";
 const TableComponent = (props) => {
-  const tableRef = useRef(null);
   const {
     columns = [],
     isLoading = false,
     dataTable,
     handleDeleteMany,
   } = props;
+  console.log("dataTable,", dataTable);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const start = () => {
@@ -24,7 +24,6 @@ const TableComponent = (props) => {
   };
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -34,6 +33,26 @@ const TableComponent = (props) => {
   };
 
   const hasSelected = selectedRowKeys.length > 0;
+  const newColumns = useMemo(() => {
+    return columns.filter(
+      (col) =>
+        col.dataIndex !== "action" &&
+        col.dataIndex !== "image" &&
+        col.dataIndex !== "avatar"
+    );
+  }, [columns]);
+
+  console.log("newColumns", newColumns);
+  const handlePrint = () => {
+    const excel = new Excel();
+    excel
+      .addSheet("product")
+      .addColumns(newColumns)
+      .addDataSource(dataTable, {
+        str2Percent: true,
+      })
+      .saveAs("Excel.xlsx");
+  };
 
   return (
     <div>
@@ -61,15 +80,10 @@ const TableComponent = (props) => {
               {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
             </span>
           </div>
-          <DownloadTableExcel
-            filename="users table"
-            sheet="users"
-            currentTableRef={tableRef.current}
-          >
-            <button> Export excel </button>
-          </DownloadTableExcel>
+
+          <button onClick={handlePrint}> Export excel </button>
+
           <Table
-            ref={tableRef}
             rowSelection={rowSelection}
             columns={columns}
             dataSource={dataTable}
