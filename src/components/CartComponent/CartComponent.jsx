@@ -41,13 +41,12 @@ export default function CartComponent(props) {
             {rating} <StarFilled className="text-[10px] text-yellow-400 ml-1" />
           </span>
           <span className="text-[11px]">
-            <span className="text-gray-300"> |</span> Đã bán{" "}
-            {selled.toLocaleString() || 1000}+
+            <span className="text-gray-300"> |</span> Đã bán {selled || 1000}+
           </span>
         </div>
         <div className="font-semibold text-[18px] ">
           <div>
-            {price.toLocaleString()}
+            {price}
             <span className="text-[18px] ">đ</span>
             <span className="bg-slate-200 border rounded-xl ml-2">
               {discount || 30}%

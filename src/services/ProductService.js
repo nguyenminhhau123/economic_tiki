@@ -51,3 +51,16 @@ export const getAllTypeProduct = async () => {
   const res = await axios.get(`${API_BACKEND_URL}/getalltype-product`);
   return res.data;
 };
+export const getProductType = async (type, page, limit) => {
+  try {
+    if (type) {
+      const res = await axios.get(
+        `${API_BACKEND_URL}/getall-product?filter=type&filter=${type}&limit=${limit}&page=${page}`
+      );
+      return res.data;
+    }
+  } catch (error) {
+    console.error("Error while fetching products:", error);
+    return null;
+  }
+};

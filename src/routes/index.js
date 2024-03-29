@@ -24,11 +24,7 @@ export const routes = [
     page: ProductPage,
     isShowHeader: true,
   },
-  {
-    path: "/:type",
-    page: TypeProductPage,
-    isShowHeader: true,
-  },
+
   {
     path: "/sign-in",
     page: SignInPage,
@@ -54,6 +50,12 @@ export const routes = [
     page: AdminPage,
     // isShowHeader: true,
     isPrivate: true,
+  },
+  {
+    path: "/product/:type",
+    page: TypeProductPage,
+
+    isShowHeader: true,
   },
   {
     path: "*",

@@ -57,11 +57,10 @@ export default function HeaderComponent({ isSearch, isCart }) {
     <div className="font-normal">
       <p
         className="  cursor-pointer p-[4px] hover:text-primary"
-        onClick={handleLogoutUser}
+        onClick={() => navigate("/")}
       >
-        Logout
+        Trang chủ
       </p>
-
       <p
         className="py-[2px] cursor-pointer hover:text-primary"
         onClick={() => navigate("/profile-user")}
@@ -76,6 +75,12 @@ export default function HeaderComponent({ isSearch, isCart }) {
           Quản lý hệ thống
         </p>
       )}
+      <p
+        className="  cursor-pointer p-[4px] hover:text-primary"
+        onClick={handleLogoutUser}
+      >
+        Đăng xuất
+      </p>
     </div>
   );
   return (
@@ -155,7 +160,10 @@ export default function HeaderComponent({ isSearch, isCart }) {
           </Loading>
           {!isCart && (
             <div className=" flex-1  hidden md:block ">
-              <div className="flex justify-center items-center">
+              <div
+                className="flex justify-center items-center cursor-pointer"
+                onClick={() => navigate("/order")}
+              >
                 <Badge count={4} size="small">
                   <ShoppingCartOutlined className="text-[30px] flex text-white" />
                 </Badge>

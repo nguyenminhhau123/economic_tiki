@@ -384,7 +384,7 @@ const AdminProduct = () => {
       });
     }
     if (isError) {
-      toast.error(" Product is already!", {
+      toast.error(" create product is not success!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -570,13 +570,7 @@ const AdminProduct = () => {
       key: product._id,
     };
   });
-  const handleNewTypeChange = (value) => {
-    // Cập nhật stateProduct với newType mới
-    setStateProduct((prevState) => ({
-      ...prevState,
-      newType: value,
-    }));
-  };
+
   return (
     <div className="">
       <div className="font-thin text-[22px]">Quản lý Sản Phẩm</div>
@@ -661,7 +655,6 @@ const AdminProduct = () => {
                       >
                         <Select
                           defaultValue={stateProduct.newType}
-                          onChange={handleNewTypeChange} // Xử lý khi thay đổi giá trị newType
                           options={renderOptions(dataProductType?.data)}
                         />
                       </Form.Item>
