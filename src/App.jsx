@@ -42,7 +42,7 @@ export default function App() {
       const { decode } = handleDecoded();
       const currentTime = new Date();
       const data = await UserService.refresh_token();
-      console.log("data refresh token", data);
+
       if (decode?.exp < currentTime.getTime() / 1000) {
         config.headers["token"] = `Bearer ${data?.access_token}`;
       }
@@ -56,7 +56,7 @@ export default function App() {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
-    // console.log("res data111: ", res);
+
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };
   return (

@@ -14,7 +14,7 @@ import {
   DownOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { user } from "../../redux/useSelector/userSelector";
+import { user, orderProduct } from "../../redux/useSelector/userSelector";
 import InputComponent from "../InputComponent/InputComponent";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import { useDispatch } from "react-redux";
@@ -30,7 +30,6 @@ export default function HeaderComponent({ isSearch, isCart }) {
   // search
   const handleSearch = (e) => {
     setStateSearch(e.target.value);
-    // console.log(e.target.value);
     dispatch(searchProduct(e.target.value));
   };
 
@@ -48,6 +47,7 @@ export default function HeaderComponent({ isSearch, isCart }) {
   };
   //
   const data = useSelector(user);
+  const orderItems = useSelector(orderProduct);
 
   useEffect(() => {
     setUserName(data?.name);
@@ -86,7 +86,7 @@ export default function HeaderComponent({ isSearch, isCart }) {
   return (
     // <div className="fixed top-0 left-0 w-[100%] z-[1000]">
     <div
-      className={`w-full grid ${
+      className={`sm:w-full  grid  ${
         isCart ? "lg:grid-cols-2 " : "grid-cols-4"
       } bg-primary h-[80px]`}
     >
@@ -164,7 +164,7 @@ export default function HeaderComponent({ isSearch, isCart }) {
                 className="flex justify-center items-center cursor-pointer"
                 onClick={() => navigate("/order")}
               >
-                <Badge count={4} size="small">
+                <Badge count={orderItems?.length} size="small">
                   <ShoppingCartOutlined className="text-[30px] flex text-white" />
                 </Badge>
                 <span className="flex text-[16px]  text-white items-end">

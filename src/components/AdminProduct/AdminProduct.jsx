@@ -354,7 +354,6 @@ const AdminProduct = () => {
   });
   const { data: dataProductType } = queryProductType;
   const handleSelectChange = (value) => {
-    console.log("value TYPE", value);
     setStateProduct({ ...stateProduct, type: value });
   };
 
@@ -516,7 +515,6 @@ const AdminProduct = () => {
   });
 
   const onFinishUpdateProduct = () => {
-    console.log();
     mutationUpdate.mutate({
       id: selectedProductId,
       ...stateProductDetails,
@@ -545,7 +543,7 @@ const AdminProduct = () => {
 
   const handleDetailsProduct = async (id) => {
     setSelectedProductId(id);
-    console.log(selectedProductId);
+
     if (id) {
       setIsLoadingUpdate(true);
       setIsOpenDrawer(true);

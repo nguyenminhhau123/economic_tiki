@@ -20,7 +20,6 @@ export const signUpUser = async (data) => {
 
 // Hàm lấy thông tin chi tiết người dùng
 export const getDetailsUser = async (id, token) => {
-  console.log("id", id);
   const res = await axios.get(`${API_BACKEND_URL}/getdetail-user/${id}`, {
     headers: {
       token: `Bearer ${token}`,

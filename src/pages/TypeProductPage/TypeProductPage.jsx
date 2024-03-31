@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { productSearch } from "../../redux/useSelector/userSelector";
 import { useDebounce } from "../../hooks/useDebounHook";
 
-export default function TypeProductPage() {
+const TypeProductPage = () => {
   const dataSearch = useSelector(productSearch);
   const debounceSearch = useDebounce(dataSearch, 1000);
 
@@ -26,7 +26,7 @@ export default function TypeProductPage() {
   const fetchDataProductType = async (state, page, limit) => {
     setIsLoading(true);
     const res = await ProductService.getProductType(state, page, limit);
-    console.log("res", state, page, limit);
+
     if (res?.status == "Ok") {
       setIsLoading(false);
       setProductType(res.productFilter);
@@ -53,7 +53,7 @@ export default function TypeProductPage() {
       limit: pageSize,
     });
   };
-  console.log("productTypee", productType);
+
   return (
     <div className="w-full bg-[#efefef]">
       <div className="px-12 m-0 items-center justify-center sm:p-0 md:px-0">
@@ -106,4 +106,5 @@ export default function TypeProductPage() {
       </div>
     </div>
   );
-}
+};
+export default TypeProductPage;

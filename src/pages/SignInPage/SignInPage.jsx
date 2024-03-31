@@ -6,7 +6,7 @@ import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import InputForm from "../../components/InputForm/InputForm";
 import imLogo from "../../assets/imgs/imLogo.png";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as UserService from "../../services/UserService";
 import Loading from "../../components/LoadingComponent/Loading";
@@ -17,6 +17,7 @@ import { updateUser } from "../../redux/slices/userSlice";
 export default function SignInPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const handleNavigate = () => {
     navigate("/sign-up");
   };
@@ -38,12 +39,17 @@ export default function SignInPage() {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
-    console.log("res data: ", res);
+
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };
 
   useEffect(() => {
     if (isSuccess && data?.status === "ok") {
+      if (location?.state) {
+        navigate(location?.state);
+      } else {
+        navigate("/");
+      }
       toast.success(" Login Successful!", {
         position: "top-right",
         autoClose: 5000,
@@ -55,7 +61,7 @@ export default function SignInPage() {
         theme: "light",
         transition: Zoom,
       });
-      navigate("/");
+
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       if (data?.access_token) {

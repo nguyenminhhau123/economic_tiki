@@ -13,3 +13,9 @@ body {
 .ant-upload-list-item {
   display: none !important;
 }
+.ant-input-number-handler-wrap {
+  display: none !important;
+}
+.ant-input-number-input {
+  text-align: center !important;
+}

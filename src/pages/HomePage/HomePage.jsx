@@ -35,7 +35,7 @@ export default function HomePage() {
   }, [dataProduct]);
   const searchProduct = useSelector(productSearch);
   const debounceSearch = useDebounce(searchProduct, 1000);
-  console.log("stateProducts2323", stateProducts);
+
   const refSearch = useRef();
   const fetchData = async (context) => {
     const limitProduct = context?.queryKey && context?.queryKey[1];
@@ -84,7 +84,7 @@ export default function HomePage() {
   // }, 500);
   const getAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct();
-    console.log("resda", res);
+
     if (res?.status == "ok") {
       setTypeProduct(res);
     }

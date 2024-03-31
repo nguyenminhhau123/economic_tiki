@@ -11,7 +11,7 @@ const TableComponent = (props) => {
     dataTable,
     handleDeleteMany,
   } = props;
-  console.log("dataTable,", dataTable);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const start = () => {
@@ -42,7 +42,6 @@ const TableComponent = (props) => {
     );
   }, [columns]);
 
-  console.log("newColumns", newColumns);
   const handlePrint = () => {
     const excel = new Excel();
     excel

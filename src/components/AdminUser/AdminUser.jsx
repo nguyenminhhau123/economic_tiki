@@ -257,7 +257,7 @@ const AdminUser = () => {
   const mutationDelete = useMutation({
     mutationFn: (data) => {
       const { id, token } = data;
-      console.log("id32232", id);
+
       return userService.deleteUser(id, token);
     },
     onSuccess: () => {
@@ -289,9 +289,7 @@ const AdminUser = () => {
   const mutationDeleteMany = useMutation({
     mutationFn: (data) => {
       const { id, token } = data;
-      console.log(data);
-      console.log("id", id, token);
-      console.log("token", token);
+
       return userService.deleteUser(id, token);
     },
     onSuccess: () => {
@@ -311,7 +309,6 @@ const AdminUser = () => {
   });
 
   const handleDeleteMany = async (ids) => {
-    console.log("ids", ids);
     mutationDeleteMany.mutate({
       id: ids,
       token: dataUser?.access_token,
@@ -320,9 +317,9 @@ const AdminUser = () => {
   // update user
   const getDetailsUser = async (data) => {
     const { id, token } = data;
-    console.log("11", id, token);
+
     const res = await userService.getDetailsUser(id, token);
-    console.log("res", res);
+
     if (res?.data) {
       setStateUser({
         name: res?.data.name,
