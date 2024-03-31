@@ -105,3 +105,13 @@ export const getDetailsProduct = async (req, res) => {
     });
   }
 };
+export const getAllTypeProduct = async (req, res) => {
+  try {
+    const response = await ProductService.getAllTypeProduct();
+    res.status(200).json(response);
+  } catch (err) {
+    return res.status(404).json({
+      errMessage: err,
+    });
+  }
+};

@@ -11,6 +11,10 @@ const OrderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        price: {
+          type: Number,
+          required: true,
+        },
         image: {
           type: String,
           required: true,
@@ -60,7 +64,7 @@ const OrderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isPaid: {
+    deliveredAt: {
       type: Date,
     },
   },

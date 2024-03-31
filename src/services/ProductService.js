@@ -20,7 +20,7 @@ export const createProduct = async (newProduct) => {
         name: name,
       });
       if (checkProduct !== null) {
-        resolve({
+        reject({
           status: "Err",
           errMessage: "the product is already!",
         });
@@ -36,14 +36,11 @@ export const createProduct = async (newProduct) => {
           rating,
           description,
         });
-
-        if (createProduct) {
-          resolve({
-            status: "ok",
-            massage: "create successful",
-            data: createProduct,
-          });
-        }
+        resolve({
+          status: "ok",
+          massage: "create successful",
+          data: createProduct,
+        });
       }
     } catch (error) {
       reject(error);
@@ -205,6 +202,20 @@ export const getDetailsProduct = async (id) => {
           data: createProduct,
         });
       }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+export const getAllTypeProduct = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const getAllType = await Product.distinct("type");
+      resolve({
+        status: "ok",
+        massage: "detail product is successful",
+        data: getAllType,
+      });
     } catch (error) {
       reject(error);
     }
