@@ -24,7 +24,9 @@ export default function ProductDetailsComponent(idProduct) {
     if (type == "increase") {
       setNumberProduct((pre) => pre + 1);
     } else {
-      setNumberProduct((pre) => pre - 1);
+      if (numberProduct > 1) {
+        setNumberProduct((pre) => pre - 1);
+      }
     }
   };
   const fetchDataProductDetails = async (context) => {

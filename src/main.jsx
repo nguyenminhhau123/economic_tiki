@@ -3,11 +3,12 @@ import ReactDOM from "react-dom";
 import App from "./App.jsx";
 import "./index.css";
 import { Provider } from "react-redux";
-import { store } from "./redux/store.js";
+import { store, persistor } from "./redux/store.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { PersistGate } from "redux-persist/integration/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -24,7 +25,9 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <ToastContainer />
-      <App />
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>
     <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>
