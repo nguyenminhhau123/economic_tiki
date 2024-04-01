@@ -54,6 +54,16 @@ export const orderProduct = createSlice({
       );
       state.orderItems = productItem;
     },
+    removeOrderAllProduct: (state, action) => {
+      const { listCheckbox } = action.payload;
+      console.log("listProduct", listCheckbox);
+
+      const productItems = state.orderItems?.filter(
+        (item) => !listCheckbox.includes(item?.product)
+      );
+      console.log("productItems", productItems);
+      state.orderItems = productItems;
+    },
   },
 });
 export const {
@@ -61,6 +71,7 @@ export const {
   increaseAmount,
   decreaseAmount,
   removeOrderProduct,
+  removeOrderAllProduct,
 } = orderProduct.actions;
 
 export default orderProduct.reducer;

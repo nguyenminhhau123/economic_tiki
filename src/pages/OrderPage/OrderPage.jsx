@@ -9,6 +9,7 @@ import {
   increaseAmount,
   decreaseAmount,
   removeOrderProduct,
+  removeOrderAllProduct,
 } from "../../redux/slices/OrderProduct";
 const OrderPage = () => {
   const [listCheckbox, setListCheckbox] = useState([]);
@@ -19,12 +20,18 @@ const OrderPage = () => {
   );
   const dispatch = useDispatch();
   const handleOnchangeCount = (type, idProduct) => {
+    const currentItem = orderItems.find((item) => item.product === idProduct);
+    console.log("currentItem", currentItem);
     if (type === "increase") {
       dispatch(increaseAmount({ idProduct }));
     } else {
-      dispatch(decreaseAmount({ idProduct }));
+      // Kiểm tra nếu số lượng hiện tại đã là 1 thì không thực hiện giảm nữa
+      if (currentItem.amount > 1) {
+        dispatch(decreaseAmount({ idProduct }));
+      }
     }
   };
+
   const removeHandleOrder = (idProduct) => {
     dispatch(removeOrderProduct({ idProduct }));
   };
@@ -38,7 +45,6 @@ const OrderPage = () => {
       setListCheckbox([...listCheckbox, e.target.value]);
     }
   };
-  console.log("stateCheckbox", listCheckbox);
   const onChangeAllCheckbox = (e) => {
     if (e.target.checked) {
       const newListCheckbox = [];
@@ -48,6 +54,12 @@ const OrderPage = () => {
       setListCheckbox(newListCheckbox);
     } else {
       setListCheckbox([]);
+    }
+  };
+  const handleRemoveAllProduct = () => {
+    console.log("listCheckbox323", listCheckbox);
+    if (listCheckbox?.length >= 1) {
+      dispatch(removeOrderAllProduct({ listCheckbox }));
     }
   };
   return (
@@ -73,7 +85,7 @@ const OrderPage = () => {
               <span className="w-[30%]">số lượng</span>
               <span className="w-[30%]">thành tiền</span>
               <span className="w-[15%]">
-                <DeleteOutlined />
+                <DeleteOutlined onClick={handleRemoveAllProduct} />
               </span>
             </div>
           </div>
