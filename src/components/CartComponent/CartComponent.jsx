@@ -4,6 +4,7 @@ import { StarFilled } from "@ant-design/icons";
 import logo from "../../assets/imgs/logo_real.png";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import { convertPrice } from "../../utils/utils";
 export default function CartComponent(props) {
   const navigate = useNavigate();
   const {
@@ -46,8 +47,9 @@ export default function CartComponent(props) {
         </div>
         <div className="font-semibold text-[18px] ">
           <div>
-            {price}
-            <span className="text-[18px] ">đ</span>
+            {convertPrice(price)}
+
+            <span className="text-[18px] "></span>
             <span className="bg-slate-200 border rounded-xl ml-2">
               {discount || 30}%
             </span>

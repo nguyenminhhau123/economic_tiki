@@ -254,9 +254,9 @@ const AdminProduct = () => {
       },
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
       title: "CountInStock",

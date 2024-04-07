@@ -2,7 +2,7 @@ import { Checkbox, Form, InputNumber, Image } from "antd";
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { orderProduct } from "../../redux/useSelector/userSelector";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import logo from "../../assets/imgs/logo_real.png";
 import {
@@ -11,9 +11,11 @@ import {
   removeOrderProduct,
   removeOrderAllProduct,
 } from "../../redux/slices/OrderProduct";
+import { convertPrice } from "../../utils/utils";
 const OrderPage = () => {
   const [listCheckbox, setListCheckbox] = useState([]);
   const orderItems = useSelector(orderProduct);
+  console.log("orderItems", orderItems);
   const totalAmount = orderItems.reduce(
     (accumulator, currentValue) => accumulator + currentValue.amount,
     0
@@ -21,7 +23,7 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const handleOnchangeCount = (type, idProduct) => {
     const currentItem = orderItems.find((item) => item.product === idProduct);
-    console.log("currentItem", currentItem);
+
     if (type === "increase") {
       dispatch(increaseAmount({ idProduct }));
     } else {
@@ -57,11 +59,37 @@ const OrderPage = () => {
     }
   };
   const handleRemoveAllProduct = () => {
-    console.log("listCheckbox323", listCheckbox);
     if (listCheckbox?.length >= 1) {
       dispatch(removeOrderAllProduct({ listCheckbox }));
     }
   };
+  const priceMemo = useMemo(() => {
+    const result = orderItems?.reduce((total, cur) => {
+      return (total += cur.price * cur.amount);
+    }, 0);
+    return result;
+  }, [orderItems]);
+  const priceDiscount = useMemo(() => {
+    const result = orderItems?.reduce((total, cur) => {
+      const discountDecimal = cur.discount / 100;
+      return (total += priceMemo * discountDecimal);
+    }, 0);
+    return result;
+  }, [orderItems, priceMemo]);
+
+  const priceDeliver = useMemo(() => {
+    let randomNumber;
+    if (priceMemo > 300000) {
+      randomNumber = Math.random() * (15000 - 10000) + 10000;
+    } else {
+      randomNumber = Math.random() * (25000 - 20000) + 20000;
+    }
+    return Math.floor(randomNumber);
+  }, [priceMemo]);
+
+  const priceTotal = useMemo(() => {
+    return priceMemo - priceDiscount + priceDeliver;
+  }, [priceMemo, priceDiscount, priceDeliver]);
   return (
     <div
       className="lg:px-[120px] bg:[#F5F5FA] h-[100hz] md:px-0
@@ -115,7 +143,9 @@ const OrderPage = () => {
                   </div>
                 </div>
                 <div className="flex w-[50%]  justify-between items-center">
-                  <span className="font-semibold w-[25%] ">{item.price}đ</span>
+                  <span className="font-semibold w-[25%] ">
+                    {convertPrice(item.price)}
+                  </span>
 
                   <div className="flex gap-1 w-[30%] ">
                     <button
@@ -146,7 +176,7 @@ const OrderPage = () => {
                   </div>
 
                   <div className=" text-red-500 w-[30%]">
-                    {item.price * item?.amount}
+                    {convertPrice(item.price * item?.amount)}
                   </div>
                   <span className="w-[15%]">
                     <DeleteOutlined
@@ -182,16 +212,22 @@ const OrderPage = () => {
             <div className="">
               <div className="flex justify-between text-gray-500">
                 <span>Tạm Tính</span>
-                <span>679.000đ</span>
+                <span>{convertPrice(priceMemo)}</span>
               </div>
               <div className="flex justify-between text-gray-500 ">
                 <span>Giảm giá</span>
-                <span>67.000đ</span>
+                <span>{convertPrice(priceDiscount)}</span>
+              </div>
+              <div className="flex justify-between text-gray-500 ">
+                <span>phí vận chuyển</span>
+                <span>{convertPrice(priceDeliver)}</span>
               </div>
               <div className="w-full h-[1px] bg-gray-300 my-3"></div>
               <div className="flex justify-between text-gray-500">
                 <span>Tổng tiền</span>
-                <span className="text-[26px] text-red-500">600.000đ</span>
+                <span className="text-[26px] text-red-500">
+                  {convertPrice(priceTotal)}
+                </span>
               </div>
               <div className=" flex text-right w-[100%] justify-end items-center text-gray-400">
                 (Giá này đã bao gồm thuế GTGT, phí đóng gói, phí vận chuyển và

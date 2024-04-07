@@ -6,6 +6,7 @@ import {
   MailOutlined,
   PhoneOutlined,
   UploadOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { Button, Upload } from "antd";
 import { useSelector } from "react-redux";
@@ -129,7 +130,7 @@ export default function ProfilePage() {
               handleOnChange={handleOnChangeAddress}
               value={address}
               placeholder="Address"
-              suffix={<PhoneOutlined />}
+              suffix={<HomeOutlined />}
             />
           </div>
         </Loading>

@@ -51,17 +51,6 @@ export default function HomePage() {
       return res;
     }
   };
-
-  // refSearch.current = true;:
-  // Dòng này đảm bảo rằng if (refSearch.current) sẽ luôn trả về true trong các lần kế tiếp sau lần render đầu tiên, điều này đảm bảo rằng dữ liệu không bị tải lại mỗi lần useEffect được gọi.
-  // useEffect(() => {
-  //   if (refSearch.current) {
-  //     setLoading(true);
-  //     fetchData(debounceSearch);
-  //   }
-  //   refSearch.current = true;
-  //   setLoading(false);
-  // }, [debounceSearch]);
   const getDataProduct = useQuery({
     queryKey: ["products", limit, debounceSearch],
     queryFn: fetchData,

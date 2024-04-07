@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as ProductService from "../../services/ProductService";
 import { user } from "../../redux/useSelector/userSelector";
 import { addOrderProduct } from "../../redux/slices/OrderProduct";
+import { convertPrice } from "../../utils/utils";
 export default function ProductDetailsComponent(idProduct) {
   const userId = useSelector(user);
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ export default function ProductDetailsComponent(idProduct) {
     enabled: idProduct !== null && idProduct !== undefined,
   });
   const { refetch, isLoading, data: ProductDetails } = queryProduct;
-  console.log("ProductDetails", ProductDetails);
+  console.log("ProductDetails3333", ProductDetails);
   const handleAddProduct = () => {
     if (!userId?.id) {
       navigate("/sign-in", { state: location?.pathname });
@@ -63,6 +64,7 @@ export default function ProductDetailsComponent(idProduct) {
             price: ProductDetails?.price,
             image: ProductDetails?.image,
             product: ProductDetails?._id,
+            discount: ProductDetails?.discount,
           },
         })
       );
@@ -103,11 +105,11 @@ export default function ProductDetailsComponent(idProduct) {
           <div className="gap-3">
             <Rate defaultValue={ProductDetails?.rating} />
             <span>
-              <span className="text-gray-300"> |</span> Đã bán{" "}
+              <span className="text-gray-300"> |</span> Đã bán
               {ProductDetails?.selled}
             </span>
             <div className="text-2xl font-medium mb-2">
-              {ProductDetails?.price} đ
+              {convertPrice(ProductDetails?.price)}
             </div>
 
             <div className="text-xs">
