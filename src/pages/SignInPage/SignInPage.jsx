@@ -12,7 +12,7 @@ import * as UserService from "../../services/UserService";
 import Loading from "../../components/LoadingComponent/Loading";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
-import { updateUser } from "../../redux/slices/userSlice";
+import { updateUser, userDetails } from "../../redux/slices/userSlice";
 
 export default function SignInPage() {
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ export default function SignInPage() {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
-
+    dispatch(userDetails(res));
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };
 

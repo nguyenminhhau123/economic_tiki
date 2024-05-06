@@ -16,7 +16,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { toast } from "react-toastify";
 import { Zoom } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { updateUser } from "../../redux/slices/userSlice";
+import { updateUser, userDetails } from "../../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import { getBase64 } from "../../utils/utils";
 import { useMutation } from "@tanstack/react-query";
@@ -42,13 +42,6 @@ export default function ProfilePage() {
       navigate("/");
       toast.success(" update success!", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
         transition: Zoom,
       });
     }
@@ -63,7 +56,9 @@ export default function ProfilePage() {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
+
     dispatch(updateUser({ ...res?.data, access_token: token }));
+    dispatch(userDetails(res));
   };
 
   const handleOnChangeEmail = (value) => {
@@ -88,7 +83,6 @@ export default function ProfilePage() {
     }
   };
 
-  // update
   const handleUpdateUser = () => {
     mutation.mutate({
       id: dataUser?.id,

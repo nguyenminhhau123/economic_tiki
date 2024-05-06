@@ -17,6 +17,7 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  blacklist: ["order.orderItemsSelected"],
 };
 // combineReducers là một hàm thuộc Redux được sử dụng để kết hợp nhiều reducer thành một reducer duy nhất để sử dụng trong cấu trúc trạng thái của Redux.
 const rootReducer = combineReducers({

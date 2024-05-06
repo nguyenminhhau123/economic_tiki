@@ -19,3 +19,6 @@ body {
 .ant-input-number-input {
   text-align: center !important;
 }
+.ant-form-item-required::before {
+  display: none !important;
+}

@@ -29,7 +29,7 @@ export default function HomePage() {
   const [limit, setLimit] = useState(10);
   const dataProduct = useSelector(productData);
   useEffect(() => {
-    if (dataProduct.length > 0) {
+    if (dataProduct?.length > 0) {
       refStateProducts.current = dataProduct;
     }
   }, [dataProduct]);
@@ -66,11 +66,6 @@ export default function HomePage() {
       setStateProducts(data?.productAll);
     }
   }, [data]);
-  // // Hàm tìm kiếm bị trì hoãn bởi debounce
-  // const debounceSearch = debounce((value) => {
-  //   fetchData(value);
-  //   console.log("Searching for:", value);
-  // }, 500);
   const getAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct();
 

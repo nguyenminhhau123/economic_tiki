@@ -33,9 +33,6 @@ const AdminUser = () => {
     avatar: "",
   };
 
-  const showModalDelete = () => {
-    setIsModalOpenDelete(true);
-  };
   const handleOk = () => {
     handleDeleteUser();
     setIsModalOpenDelete(false);
@@ -353,13 +350,6 @@ const AdminUser = () => {
       refetch();
       toast.success("Update Successful!", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
         transition: Zoom,
       });
     },
@@ -406,8 +396,8 @@ const AdminUser = () => {
         className=""
         title="xóa tài khoản"
         open={isModalOpenDelete}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        onOk={() => handleOk()}
+        onCancel={() => handleCancel()}
       >
         <p>bạn có chắc xóa không?</p>
       </Modal>

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import * as UserService from "../../services/UserService";
 import { ResetUser } from "../../redux/slices/userSlice";
 import { searchProduct } from "../../redux/slices/ProductSlice";
+import { clearItems } from "../../redux/slices/OrderProduct";
 import {
   UserOutlined,
   DownOutlined,
@@ -34,6 +35,7 @@ export default function HeaderComponent({ isSearch, isCart }) {
   };
 
   const handleLogoutUser = async () => {
+    dispatch(clearItems());
     localStorage.clear();
     setIsPending(true);
     navigate("/");
@@ -94,14 +96,17 @@ export default function HeaderComponent({ isSearch, isCart }) {
         className="flex col-span-2 lg:col-span-1 gap-x-3 justify-center items-center
       "
       >
-        <div className="font-extrabold text-[25px] text-white  md:block hidden">
+        <div
+          className="font-extrabold text-[25px] text-white  md:block hidden cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           Developer
         </div>
         <div
           className="m-0 flex justify-center 
            rounded-md items-center h-[10%] w-[10%]"
         >
-          <Image src={logo} />
+          <Image src={logo} preview={false} />
         </div>
       </div>
       {!isSearch && (

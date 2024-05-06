@@ -8,7 +8,9 @@ const initialState = {
   access_token: "",
   id: "",
   isAdmin: false,
+  userDetails: {},
 };
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -44,9 +46,13 @@ export const userSlice = createSlice({
       state.avatar = "";
       state.isAdmin = false;
     },
+    userDetails: (state, action) => {
+      console.log(action.payload);
+      state.userDetails = action.payload;
+    },
   },
 });
 
-export const { updateUser, ResetUser } = userSlice.actions;
+export const { updateUser, ResetUser, userDetails } = userSlice.actions;
 
 export default userSlice.reducer;

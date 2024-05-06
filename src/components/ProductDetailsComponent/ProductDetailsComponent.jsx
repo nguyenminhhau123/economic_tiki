@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./style.css";
 import { Image, Col, Row, InputNumber } from "antd";
-import imageProduct from "../../assets/imgs/imtest.webp";
 import imageSmall from "../../assets/imgs/imsmall.webp";
 import imageSmall2 from "../../assets/imgs/imsmall2.webp";
 import { StarFilled, PlusOutlined, MinusOutlined } from "@ant-design/icons";
@@ -15,6 +14,7 @@ import { user } from "../../redux/useSelector/userSelector";
 import { addOrderProduct } from "../../redux/slices/OrderProduct";
 import { convertPrice } from "../../utils/utils";
 export default function ProductDetailsComponent(idProduct) {
+  const shippingAddress = useSelector((state) => state.order?.shippingAddress);
   const userId = useSelector(user);
   const dispatch = useDispatch();
   const [numberProduct, setNumberProduct] = useState(1);
@@ -51,7 +51,7 @@ export default function ProductDetailsComponent(idProduct) {
     enabled: idProduct !== null && idProduct !== undefined,
   });
   const { refetch, isLoading, data: ProductDetails } = queryProduct;
-  console.log("ProductDetails3333", ProductDetails);
+  console.log("ProductDetails", ProductDetails);
   const handleAddProduct = () => {
     if (!userId?.id) {
       navigate("/sign-in", { state: location?.pathname });
@@ -68,6 +68,7 @@ export default function ProductDetailsComponent(idProduct) {
           },
         })
       );
+      navigate("/order");
     }
   };
 
@@ -106,6 +107,8 @@ export default function ProductDetailsComponent(idProduct) {
             <Rate defaultValue={ProductDetails?.rating} />
             <span>
               <span className="text-gray-300"> |</span> Đã bán
+            </span>
+            <span className="ml-2 text-[20px] text-red-400">
               {ProductDetails?.selled}
             </span>
             <div className="text-2xl font-medium mb-2">
@@ -113,16 +116,13 @@ export default function ProductDetailsComponent(idProduct) {
             </div>
 
             <div className="text-xs">
-              <span className=" mr-2"> Giao đến:</span>
-              <span className="text-xl mr-2 leading-3 underline text-blue-500">
-                Tuy An-Phu Yen
-              </span>
-              <span className="text-xs text-blue-500 underline">
-                đổi địa chỉ
+              <span className=" mr-2"> Giảm Giá: </span>
+              <span className="text-xl mr-2 leading-3  text-blue-500">
+                {`${ProductDetails?.discount}%`}
               </span>
             </div>
             <div className="mt-2">
-              <div className="text-[16px]">số lượng</div>
+              <div className="text-[16px]">số lượng:</div>
 
               <div className="flex gap-1 mt-2 ">
                 <button
