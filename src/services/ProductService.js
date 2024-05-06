@@ -143,10 +143,8 @@ export const getAllProduct = async (limit, page, sort, filter) => {
         });
       }
       if (sort) {
-        console.log("sort", sort);
         const objectSort = {};
         objectSort[sort[1]] = sort[0];
-        console.log("objectSort", objectSort);
         const productAllSort = await Product.find()
           .limit(limit)
           .skip(limit * page)

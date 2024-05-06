@@ -7,7 +7,7 @@ dotenv.config();
 
 import { genneralAccessToken, genneralRefreshToken } from "./JwtService.js";
 export const createUser = async (newUser) => {
-  const { name, email, password, confirmPassword, phone, isAdmin } = newUser;
+  const { name, email, password, phone, isAdmin, city, address } = newUser;
   const hashPassword = bcrypt.hashSync(password, 10);
 
   return new Promise(async (resolve, reject) => {
@@ -27,6 +27,8 @@ export const createUser = async (newUser) => {
         password: hashPassword,
         phone,
         isAdmin,
+        city,
+        address,
       });
       if (createUser) {
         resolve({
